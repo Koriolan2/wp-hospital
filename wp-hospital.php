@@ -54,6 +54,7 @@ class WPHospitalPlugin {
     public function enqueue_scripts($hook) {
         if ('post.php' === $hook || 'post-new.php' === $hook) {
             wp_enqueue_script('qr-code-script', plugin_dir_url(__FILE__) . 'assets/js/qr-code.js', [], time(), true);
+            wp_enqueue_script('qualification-courses', plugin_dir_url(__FILE__) . 'assets/js/qualification-courses.js', ['jquery'], time(), true);
         }
     }
 
