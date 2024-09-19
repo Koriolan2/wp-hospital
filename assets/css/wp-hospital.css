@@ -1,0 +1,30 @@
+.full-width {
+    width: 100%; /* Встановлюємо ширину поля 100% */
+    max-width: 100%; /* Забезпечуємо, що ширина поля не перевищить контейнер */
+    box-sizing: border-box; /* Щоб враховувати padding */
+}
+
+
+.qr-code-metabox-content {
+    padding: 10px;
+}
+
+.qr-code-metabox-content p {
+    margin-bottom: 10px;
+}
+
+.qr-code-image-preview img {
+    border: 1px solid #ddd;
+    padding: 5px;
+    background-color: #f9f9f9;
+    max-width: 100%;
+    height: auto;
+}
+
+#generate_qr_code {
+    margin-right: 5px;
+}
+
+#upload_qr_code {
+    margin-left: 5px;
+}
