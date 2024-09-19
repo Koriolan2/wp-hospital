@@ -23,23 +23,24 @@ class MetaBoxQRCode {
         <div class="qr-code-metabox-content">
             <p>
                 <label for="worker_qr_url"><strong>URL-адреса</strong></label>
-                <!-- Застосовуємо клас 'full-width' для фіксованої ширини -->
                 <input type="url" id="worker_qr_url" name="worker_qr_url" class="full-width" value="<?php echo esc_attr($qr_url); ?>" />
             </p>
             
             <p>
-                <!-- Кнопки з шириною на весь метабокс і відступами -->
                 <button type="button" id="generate_qr_code" class="button button-primary full-width-btn" data-post-id="<?php echo $post->ID; ?>">Згенерувати QR-код</button>
             </p>
-            <p>
+            <!-- <p>
                 <button type="button" id="upload_qr_code" class="button full-width-btn">Завантажити готовий QR-код</button>
-            </p>
-            
-            <div id="qr_code_image" class="qr-code-image-preview">
-                <?php if ($qr_code_image_url): ?>
+            </p> -->
+
+            <?php if ($qr_code_image_url): ?>
+                <div id="qr_code_image" class="qr-code-image-preview">
                     <img src="<?php echo esc_url($qr_code_image_url); ?>" alt="QR Code" style="max-width:100%;" />
-                <?php endif; ?>
-            </div>
+                </div>
+                <p>
+                    <button type="button" id="delete_qr_code" class="button button-secondary full-width-btn" data-post-id="<?php echo $post->ID; ?>">Видалити QR-код</button>
+                </p>
+            <?php endif; ?>
         </div>
         <?php
     }

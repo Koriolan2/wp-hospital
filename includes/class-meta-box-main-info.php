@@ -1,68 +1,96 @@
 <?php
 
 class MetaBoxMainInfo {
+    public function __construct() {
+        // Реєстрація метабоксу
+        add_action('add_meta_boxes', [$this, 'register']);
+        // Збереження даних
+        add_action('save_post', [$this, 'save']);
+    }
+
     // Реєстрація метабоксу
     public function register() {
         add_meta_box(
             'worker_main_info',
             'Основна інформація',
             [$this, 'display'],
-            'worker',
+            'worker', // Замініть на ваш користувацький тип запису, якщо потрібно
             'normal',
             'high'
         );
     }
 
-    // Виведення метабоксу у вигляді таблиці
+    // Виведення метабоксу
     public function display($post) {
-        // Отримуємо значення метаданих (якщо вони існують)
-        $specialty = get_post_meta($post->ID, '_worker_specialty', true);
+        // Отримуємо значення збережених метаданих
+        $speciality = get_post_meta($post->ID, '_worker_speciality', true);
         $category = get_post_meta($post->ID, '_worker_category', true);
-        
-        // Виведення HTML з таблицею
+        $education = get_post_meta($post->ID, '_worker_education', true); // Нове поле освіти
+
+        // Масив категорій
+        $categories = [
+            'default' => 'Оберіть категорію',
+            'first' => 'Перша категорія',
+            'second' => 'Друга категорія',
+            'higher' => 'Вища категорія',
+        ];
+
         ?>
         <table class="form-table">
-            <tbody>
-                <tr>
-                    <th>
-                        <label for="worker_specialty">Спеціальність</label>
-                    </th>
-                    <td>
-                        <!-- Додаємо клас 'full-width' для 100% ширини -->
-                        <input type="text" id="worker_specialty" name="worker_specialty" class="regular-text full-width" value="<?php echo esc_attr($specialty); ?>" />
-                    </td>
-                </tr>
-                <tr>
-                    <th>
-                        <label for="worker_category">Категорія</label>
-                    </th>
-                    <td>
-                        <select id="worker_category" name="worker_category" class="full-width">
-                            <option value="">Оберіть категорію</option>
-                            <option value="first" <?php selected($category, 'first'); ?>>Перша категорія</option>
-                            <option value="second" <?php selected($category, 'second'); ?>>Друга категорія</option>
-                            <option value="highest" <?php selected($category, 'highest'); ?>>Вища категорія</option>
-                        </select>
-                    </td>
-                </tr>
-            </tbody>
+            <tr>
+                <th><label for="worker_speciality">Спеціальність</label></th>
+                <td>
+                    <input type="text" id="worker_speciality" name="worker_speciality" value="<?php echo esc_attr($speciality); ?>" class="regular-text" style="width: 100%;" />
+                </td>
+            </tr>
+            <tr>
+                <th><label for="worker_category">Категорія</label></th>
+                <td>
+                    <select id="worker_category" name="worker_category" class="regular-text" style="width: 100%;">
+                        <?php foreach ($categories as $value => $label): ?>
+                            <option value="<?php echo esc_attr($value); ?>" <?php selected($category, $value); ?>><?php echo esc_html($label); ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <th><label for="worker_education">Освіта</label></th>
+                <td>
+                    <input type="text" id="worker_education" name="worker_education" value="<?php echo esc_attr($education); ?>" class="regular-text" style="width: 100%;" />
+                </td>
+            </tr>
         </table>
         <?php
     }
 
-    // Збереження даних метабоксу
+    // Збереження метаданих
     public function save($post_id) {
-        // Зберігаємо спеціальність
-        if (isset($_POST['worker_specialty'])) {
-            update_post_meta($post_id, '_worker_specialty', sanitize_text_field($_POST['worker_specialty']));
+        // Перевіряємо права користувача на редагування посту
+        if (!current_user_can('edit_post', $post_id)) {
+            return;
         }
 
-        // Зберігаємо категорію
+        // Перевірка на автозбереження
+        if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) {
+            return;
+        }
+
+        // Перевіряємо та зберігаємо спеціальність
+        if (isset($_POST['worker_speciality'])) {
+            update_post_meta($post_id, '_worker_speciality', sanitize_text_field($_POST['worker_speciality']));
+        }
+
+        // Перевіряємо та зберігаємо категорію
         if (isset($_POST['worker_category'])) {
             update_post_meta($post_id, '_worker_category', sanitize_text_field($_POST['worker_category']));
+        }
+
+        // Перевіряємо та зберігаємо освіту
+        if (isset($_POST['worker_education'])) {
+            update_post_meta($post_id, '_worker_education', sanitize_text_field($_POST['worker_education']));
         }
     }
 }
 
-// Додаємо дію для збереження метаданих при збереженні посту
-add_action('save_post', [new MetaBoxMainInfo(), 'save']);
+// Створюємо екземпляр класу
+new MetaBoxMainInfo();

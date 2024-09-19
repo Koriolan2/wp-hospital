@@ -1,9 +1,7 @@
 document.addEventListener('DOMContentLoaded', function () {
     const qrButton = document.getElementById('generate_qr_code');
-    const uploadButton = document.getElementById('upload_qr_code');
-    const removeButton = document.getElementById('remove_qr_code');
 
-    // Генерація QR-коду
+    // Обробник для кнопки "Згенерувати QR-код"
     if (qrButton) {
         qrButton.addEventListener('click', function () {
             const url = document.getElementById('worker_qr_url').value;
@@ -22,66 +20,66 @@ document.addEventListener('DOMContentLoaded', function () {
             // Відправка AJAX-запиту
             jQuery.post(ajaxurl, data, function (response) {
                 if (response.success) {
-                    const qrCodeImage = document.getElementById('qr_code_image');
-                    qrCodeImage.innerHTML = '<img src="' + response.data.image_url + '" alt="QR Code" style="max-width: 100%;">';
+                    // Перевіряємо, чи існує контейнер для QR-коду
+                    const qrCodeImageContainer = document.getElementById('qr_code_image');
+                    if (!qrCodeImageContainer) {
+                        // Якщо контейнера немає, створюємо його
+                        const newQrCodeImageContainer = document.createElement('div');
+                        newQrCodeImageContainer.id = 'qr_code_image';
+                        newQrCodeImageContainer.classList.add('qr-code-image-preview');
+                        qrButton.parentElement.parentElement.appendChild(newQrCodeImageContainer);
+                    }
+
+                    // Додаємо QR-код до контейнера
+                    document.getElementById('qr_code_image').innerHTML = '<img src="' + response.data.image_url + '" alt="QR Code" style="max-width:100%;" />';
+
+                    // Додаємо кнопку "Видалити QR-код", якщо її немає
+                    if (!document.getElementById('delete_qr_code')) {
+                        const deleteButtonHtml = '<p><button type="button" id="delete_qr_code" class="button button-secondary full-width-btn" data-post-id="' + qrButton.dataset.postId + '">Видалити QR-код</button></p>';
+                        jQuery('#qr_code_image').after(deleteButtonHtml);
+
+                        // Прив'язуємо обробник події для нової кнопки
+                        bindDeleteButton();
+                    }
                 } else {
                     alert('Помилка при генерації QR-коду: ' + response.data.message);
                 }
+            }).fail(function(xhr, status, error) {
+                console.error('AJAX error:', xhr.responseText); // Виведення помилки в консоль
+                alert('Сталася помилка при генерації QR-коду.');
             });
         });
     }
 
-    // Видалення QR-коду
-    if (removeButton) {
-        removeButton.addEventListener('click', function () {
-            const postId = qrButton.dataset.postId;
-
-            // AJAX запит для видалення QR-коду
-            const data = {
-                action: 'remove_qr_code',
-                post_id: postId
-            };
-
-            jQuery.post(ajaxurl, data, function (response) {
-                if (response.success) {
-                    document.getElementById('qr_code_image').innerHTML = '';
-                    removeButton.style.display = 'none';
-                } else {
-                    alert('Помилка при видаленні QR-коду: ' + response.data.message);
-                }
-            });
-        });
-    }
-
-    // Завантаження QR-коду
-    if (uploadButton) {
-        uploadButton.addEventListener('click', function () {
-            const customUploader = wp.media({
-                title: 'Завантажте QR-код',
-                button: {
-                    text: 'Вибрати QR-код'
-                },
-                multiple: false
-            })
-            .on('select', function () {
-                const attachment = customUploader.state().get('selection').first().toJSON();
-                const qrCodeImage = document.getElementById('qr_code_image');
-                qrCodeImage.innerHTML = '<img src="' + attachment.url + '" alt="QR Code" style="max-width: 100%;">';
-
-                // Збереження ID зображення через AJAX
+    // Функція для прив'язки обробника події до кнопки видалення
+    function bindDeleteButton() {
+        const deleteButton = document.getElementById('delete_qr_code');
+        if (deleteButton) {
+            deleteButton.addEventListener('click', function () {
                 const data = {
-                    action: 'save_qr_code_image',
-                    post_id: qrButton.dataset.postId,
-                    attachment_id: attachment.id
+                    action: 'delete_qr_code',
+                    post_id: deleteButton.dataset.postId
                 };
 
+                // Відправка AJAX-запиту на видалення QR-коду
                 jQuery.post(ajaxurl, data, function (response) {
-                    if (!response.success) {
-                        alert('Помилка при збереженні QR-коду: ' + response.data.message);
+                    if (response.success) {
+                        alert('QR-код успішно видалено.');
+                        document.getElementById('qr_code_image').remove(); // Видаляємо контейнер з QR-кодом
+                        deleteButton.remove(); // Видаляємо кнопку видалення
+                    } else {
+                        alert('Помилка при видаленні QR-коду: ' + response.data.message);
                     }
+                }).fail(function(xhr, status, error) {
+                    console.error('AJAX error:', xhr.responseText); // Виведення помилки в консоль
+                    alert('Сталася помилка при видаленні QR-коду.');
                 });
-            })
-            .open();
-        });
+            });
+        } else {
+            console.log('Кнопка видалення QR-коду не знайдена');
+        }
     }
+
+    // Якщо кнопка видалення вже є на сторінці при завантаженні, прив'язуємо обробник події
+    bindDeleteButton();
 });

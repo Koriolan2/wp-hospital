@@ -37,25 +37,29 @@ class CreatePostType {
         return $columns;
     }
 
-    // Заповнення даними нової колонки
     public function fill_custom_column($column, $post_id) {
         if ($column === 'completion_status') {
-            // Отримуємо метадані про спеціальність і категорію
+            // Отримуємо метадані про спеціальність, категорію, освіту та основний текст
             $specialty = get_post_meta($post_id, '_worker_specialty', true);
             $category = get_post_meta($post_id, '_worker_category', true);
+            $education = get_post_meta($post_id, '_worker_education', true);
             $has_thumbnail = has_post_thumbnail($post_id);
-
+            $content = get_post_field('post_content', $post_id); // Отримуємо основний текст поста
+    
             // Обчислення ступеня заповненості
             $fields_filled = 0;
-            $total_fields = 6; // Кількість полів для перевірки
-
+            $total_fields = 5; // Тепер враховуємо 5 полів: спеціальність, категорія, освіта, зображення, основний текст
+    
+            // Перевіряємо кожне поле на заповненість
             if (!empty($specialty)) $fields_filled++;
             if (!empty($category)) $fields_filled++;
+            if (!empty($education)) $fields_filled++;
             if ($has_thumbnail) $fields_filled++;
-
+            if (!empty($content) && trim($content) !== '') $fields_filled++; // Перевіряємо, чи є контент
+    
             // Підрахунок відсотків заповненості
             $completion_percentage = ($fields_filled / $total_fields) * 100;
-
+    
             // Виведення відсотків заповненості
             echo round($completion_percentage) . '%';
         }
