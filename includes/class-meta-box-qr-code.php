@@ -23,12 +23,16 @@ class MetaBoxQRCode {
         <div class="qr-code-metabox-content">
             <p>
                 <label for="worker_qr_url"><strong>URL-адреса</strong></label>
-                <input type="url" id="worker_qr_url" name="worker_qr_url" class="regular-text" value="<?php echo esc_attr($qr_url); ?>" />
+                <!-- Застосовуємо клас 'full-width' для фіксованої ширини -->
+                <input type="url" id="worker_qr_url" name="worker_qr_url" class="full-width" value="<?php echo esc_attr($qr_url); ?>" />
             </p>
             
             <p>
-                <button type="button" id="generate_qr_code" class="button button-primary" data-post-id="<?php echo $post->ID; ?>">Згенерувати QR-код</button>
-                <button type="button" id="upload_qr_code" class="button">Завантажити готовий QR-код</button>
+                <!-- Кнопки з шириною на весь метабокс і відступами -->
+                <button type="button" id="generate_qr_code" class="button button-primary full-width-btn" data-post-id="<?php echo $post->ID; ?>">Згенерувати QR-код</button>
+            </p>
+            <p>
+                <button type="button" id="upload_qr_code" class="button full-width-btn">Завантажити готовий QR-код</button>
             </p>
             
             <div id="qr_code_image" class="qr-code-image-preview">

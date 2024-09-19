@@ -1,9 +1,9 @@
+/* Фіксована ширина текстового поля */
 .full-width {
-    width: 100%; /* Встановлюємо ширину поля 100% */
-    max-width: 100%; /* Забезпечуємо, що ширина поля не перевищить контейнер */
-    box-sizing: border-box; /* Щоб враховувати padding */
+    width: 100%; /* Ширина на весь метабокс */
+    max-width: 100%; /* Забезпечує, що ширина не перевищує контейнер */
+    box-sizing: border-box; /* Враховує padding */
 }
-
 
 .qr-code-metabox-content {
     padding: 10px;
@@ -28,3 +28,19 @@
 #upload_qr_code {
     margin-left: 5px;
 }
+
+/* Кнопки на всю ширину */
+.full-width-btn {
+    width: 100%; /* Кнопки займають всю ширину метабоксу */
+    margin-bottom: 10px; /* Відступи між кнопками */
+}
+
+/* Попередній перегляд зображення QR-коду */
+.qr-code-image-preview img {
+    border: 1px solid #ddd;
+    padding: 5px;
+    background-color: #f9f9f9;
+    max-width: 100%;
+    height: auto;
+}
+
