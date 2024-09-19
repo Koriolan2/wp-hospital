@@ -15,6 +15,7 @@ if (!defined('ABSPATH')) {
 // Підключаємо необхідні файли плагіну
 require_once plugin_dir_path(__FILE__) . 'includes/class-create-post-type.php';
 require_once plugin_dir_path(__FILE__) . 'includes/class-meta-box-main-info.php';
+require_once plugin_dir_path(__FILE__) . 'includes/class-meta-box-education-info.php';
 require_once plugin_dir_path(__FILE__) . 'includes/class-meta-box-qr-code.php';
 require_once plugin_dir_path(__FILE__) . 'includes/class-qr-code-handler.php';
 
