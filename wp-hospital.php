@@ -18,6 +18,8 @@ require_once plugin_dir_path(__FILE__) . 'includes/class-meta-box-main-info.php'
 require_once plugin_dir_path(__FILE__) . 'includes/class-meta-box-education-info.php';
 require_once plugin_dir_path(__FILE__) . 'includes/class-meta-box-qr-code.php';
 require_once plugin_dir_path(__FILE__) . 'includes/class-qr-code-handler.php';
+require_once plugin_dir_path(__FILE__) . 'includes/class-worker-statistics.php';
+require_once plugin_dir_path(__FILE__) . 'includes/class-dynamic-tag-meta.php';
 
 // Основний клас плагіну
 class WPHospitalPlugin {
@@ -58,13 +60,16 @@ class WPHospitalPlugin {
         }
     }
 
-    // Підключення стилів для метабоксів
     public function enqueue_styles($hook) {
-        // Підключаємо стилі тільки на сторінках редагування записів
-        if ('post.php' === $hook || 'post-new.php' === $hook) {
+        // Підключаємо стилі тільки на сторінках редагування записів і сторінці з переліком записів
+        global $post_type;
+    
+        // Підключаємо стилі на сторінках редагування поста (post.php, post-new.php) та на сторінці зі списком записів (edit.php)
+        if ( ('post.php' === $hook || 'post-new.php' === $hook || 'edit.php' === $hook) && 'worker' === $post_type) {
             wp_enqueue_style('wp-hospital-css', plugin_dir_url(__FILE__) . 'assets/css/wp-hospital.css');
         }
     }
+    
 }
 
 // Запуск плагіну
